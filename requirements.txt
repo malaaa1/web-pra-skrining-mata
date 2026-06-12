@@ -1,8 +1,8 @@
-streamlit
-tensorflow
-keras
-opencv-python-headless
-pillow
-numpy
-matplotlib
-huggingface_hub
+streamlit==1.41.1
+tensorflow-cpu==2.16.2
+keras==3.6.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+pillow==10.4.0
+matplotlib==3.9.2
+huggingface_hub==0.26.2
