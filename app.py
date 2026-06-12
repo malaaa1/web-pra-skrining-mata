@@ -226,7 +226,13 @@ st.markdown("""
 
 
 # LOAD MODEL
+@keras.saving.register_keras_serializable(package="Custom", name="preprocess_input")
 def preprocess_input(x):
+    return tf.keras.applications.convnext.preprocess_input(x)
+
+
+@keras.saving.register_keras_serializable(package="Custom", name="function")
+def function(x):
     return tf.keras.applications.convnext.preprocess_input(x)
 
 
@@ -234,21 +240,25 @@ def preprocess_input(x):
 def load_best_model():
     try:
         keras.config.enable_unsafe_deserialization()
-    except:
+    except Exception:
         pass
 
-    with custom_object_scope({
+    keras.saving.get_custom_objects()["preprocess_input"] = preprocess_input
+    keras.saving.get_custom_objects()["function"] = function
+    tf.keras.utils.get_custom_objects()["preprocess_input"] = preprocess_input
+    tf.keras.utils.get_custom_objects()["function"] = function
+
+    custom_objects = {
         "preprocess_input": preprocess_input,
-        "function": preprocess_input
-    }):
+        "function": function
+    }
+
+    with custom_object_scope(custom_objects):
         model = load_model(
             MODEL_PATH,
             compile=False,
             safe_mode=False,
-            custom_objects={
-                "preprocess_input": preprocess_input,
-                "function": preprocess_input
-            }
+            custom_objects=custom_objects
         )
 
     return model
